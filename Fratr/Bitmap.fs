@@ -14,6 +14,7 @@ module Bitmap =
 
         let wb = WriteableBitmap (resx, resy, 96.0, 96.0, System.Windows.Media.PixelFormats.Bgra32, null)
 
+        // convert float between 0 and 1 to byte value
         let f2b (f: float) =
             255.0 * min 1.0 (max 0.0 f) |> byte
 
@@ -34,8 +35,7 @@ module Bitmap =
                 pixel.SetValue (f2b color.R, 2)
                 wb.WritePixels (sourceRect, pixel, sourceStride, x, resy - 1 - y)
 
-        let pixels = Scene.RayTrace scene
-        pixels |> Array2D.iteri setPixel
+        scene |> Scene.RayTrace setPixel
 
         image.Source <- wb
 
@@ -57,7 +57,6 @@ module Bitmap =
             | None -> ()
             | Some color -> bitmap.SetPixel(x, resy - 1 - y, color |> toSysColor)
 
-        let pixels = Scene.RayTrace scene
-        pixels |> Array2D.iteri setPixel
+        scene |> Scene.RayTrace setPixel
  
         bitmap.Save(@"d:\temp\Fratr.bmp")

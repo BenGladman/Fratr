@@ -41,9 +41,9 @@ module Scene =
         // get the nearest (or none of no hit)
         |> Seq.minBy getDistance
 
-    let private traceRay (objs: SceneObject seq) (lights: Light seq) (ray: Ray) =
-        findHitObj ray objs
-        |> Option.map (fun hit -> lights |> Seq.averageBy (shade hit))
+    let private traceRay (scene: Scene) (ray: Ray) =
+        findHitObj ray scene.Objs
+        |> Option.map (fun hit -> scene.Lights |> Seq.averageBy (shade hit))
 
         (* alternate implentation ...
         let lgs = lights |> Array.ofSeq
@@ -58,7 +58,20 @@ module Scene =
         shadeCol
         *)
 
-    let RayTrace (scene: Scene) =
-        ViewPort.CreateRayRaster scene.ViewPort scene.ResX scene.ResY
-        |> Array2D.map (traceRay scene.Objs scene.Lights)
+    /// Applies the given function to each pixel in the image
+    let RayTrace (func: int -> int -> Color option -> unit) (scene: Scene) =
+        let vp = scene.ViewPort
+        let resX = scene.ResX
+        let resY = scene.ResY
+
+        let dX = vp.Width / (float resX)
+        let dY = vp.Height / (float resY)
+        let start = vp.Center - ((vp.Width - dX) / 2.0) * vp.DirRight - ((vp.Height - dY) / 2.0) * vp.DirUp
+
+        for x in 0 .. resX - 1 do
+            for y in 0 .. resY - 1 do
+                let point = start + (float x * dX) * vp.DirRight + (float y * dY) * vp.DirUp
+                let ray = Ray.FromPoints vp.Eye point
+                let c = traceRay scene ray
+                func x y c
 
