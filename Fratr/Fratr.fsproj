@@ -65,8 +65,8 @@
     <Compile Include="SceneObject.fs" />
     <Compile Include="Scene.fs" />
     <Compile Include="SampleScene.fs" />
+    <Compile Include="RayTrace.fs" />
     <Compile Include="Bitmap.fs" />
-    <Compile Include="Programx.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>

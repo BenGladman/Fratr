@@ -1,6 +1,7 @@
 ﻿namespace Fratr
 
 open Color
+open RayTrace
 open Scene
 open System.Windows
 open System.Windows.Media.Imaging
@@ -35,7 +36,7 @@ module Bitmap =
                 pixel.SetValue (f2b color.R, 2)
                 wb.WritePixels (sourceRect, pixel, sourceStride, x, resy - 1 - y)
 
-        scene |> Scene.RayTrace setPixel
+        RayTrace setPixel scene
 
         image.Source <- wb
 
@@ -57,6 +58,6 @@ module Bitmap =
             | None -> ()
             | Some color -> bitmap.SetPixel(x, resy - 1 - y, color |> toSysColor)
 
-        scene |> Scene.RayTrace setPixel
+        RayTrace setPixel scene
  
         bitmap.Save(@"d:\temp\Fratr.bmp")
