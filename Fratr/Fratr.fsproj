@@ -59,6 +59,7 @@
     <Compile Include="FloatHelpers.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Color.fs" />
+    <Compile Include="Material.fs" />
     <Compile Include="Light.fs" />
     <Compile Include="Ray.fs" />
     <Compile Include="ViewPort.fs" />

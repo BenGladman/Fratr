@@ -1,6 +1,7 @@
 ﻿namespace Fratr
 
 open Color
+open FloatHelpers
 open Light
 open Ray
 open Scene
@@ -33,17 +34,33 @@ module RayTrace =
         let rayToLight = Ray (hit.Pos, lightDir)
         let lightVisible = findHitObj getSigObjs rayToLight |> Option.isNone
 
-        // get the fraction of diffuse Light (cap at 0)
-        let diffF =
+        let diffuseColor =
             if lightVisible then
-                max 0.0 (Dot (hit.Normal, lightDir))
+                let diffFrac = (Dot (hit.Normal, lightDir))
+                if (IsPositive diffFrac) then
+                    let diffuseFactor = 0.6
+                    diffuseFactor * diffFrac * hit.Material.DiffuseColor * light.Color
+                else
+                    Color.Black
             else
-                0.0
+                Color.Black
 
-        // calculate the total color by ambient + diffuse light
-        let s = diffuse * diffF + ambient
-        // return the shaded color
-        s * hit.Color
+        let specularColor =
+            if lightVisible then
+                let reflDir = hit.Ray.Direction - 2.0 * (Dot (hit.Normal, hit.Ray.Direction)) * hit.Normal;
+                let specFrac = (Dot (reflDir, lightDir))
+                if (specFrac > 0.1) then
+                    System.Math.Pow(specFrac, 10.0) * hit.Material.Shininess * hit.Material.SpecularColor * light.Color
+                else
+                    Color.Black
+            else
+                Color.Black
+
+        let ambientColor =
+            let ambientFactor = 0.4
+            ambientFactor * hit.Material.DiffuseColor * light.Color
+
+        diffuseColor + specularColor + ambientColor
 
     let private traceRay (getSigObjs: Ray -> SceneObject seq) (scene: Scene) (ray: Ray) =
         findHitObj getSigObjs ray

@@ -2,6 +2,7 @@
 
 open Color
 open FloatHelpers
+open Material
 open Ray
 open Vector
 
@@ -11,7 +12,7 @@ module SceneObject =
         Distance: float
         Pos: Point
         Normal: Direction
-        Color: Color
+        Material: Material
         }
 
     type SceneObject = {
@@ -27,14 +28,14 @@ module SceneObject =
         | Positive -> let sqrtRad = (sqrt rad)/(2.0 * a)
                       [ k0 + sqrtRad; k0 - sqrtRad ]
 
-    let Sphere (center: Point) (radius: float) (color: Color) : SceneObject =
+    let Sphere (center: Point) (radius: float) (material: Material) : SceneObject =
         let r2 = radius * radius
         let hitTest (ray : Ray) =
             
             let getResult t =
                 let pos = ray.Start + t * ray.Direction
                 let normal = Norm (pos - center)
-                { Ray = ray; Distance = t; Pos = pos; Normal = normal; Color = color }
+                { Ray = ray; Distance = t; Pos = pos; Normal = normal; Material = material }
 
             let ts =
                 let v0 = center - ray.Start
