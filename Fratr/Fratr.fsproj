@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>87151fd7-af4b-4155-b74c-63ce675b3e48</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Fratr</RootNamespace>
     <AssemblyName>Fratr</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -42,14 +42,20 @@
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
+    <Resource Include="App.xaml" />
+    <Resource Include="MainWindow.xaml" />
     <Compile Include="FloatHelpers.fs" />
     <Compile Include="Vector.fs" />
     <Compile Include="Color.fs" />
@@ -58,7 +64,9 @@
     <Compile Include="ViewPort.fs" />
     <Compile Include="SceneObject.fs" />
     <Compile Include="Scene.fs" />
+    <Compile Include="SampleScene1.fs" />
     <Compile Include="Bitmap.fs" />
+    <Compile Include="Programx.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>
