@@ -15,6 +15,10 @@ let main argv =
     
     // Hook into UI elements here
     application.Activated
-    |> Event.add (fun _ -> Bitmap.Initialize application.MainWindow SampleScene1.Scene)
+    |> Event.add (fun _ -> Bitmap.Initialize application.MainWindow SampleScene.Scene2)
+
+    // Use this to save file rather than display in window
+    // Bitmap.SaveImage SampleScene.Scene1
 
     application.Run()
+

@@ -16,7 +16,6 @@
             Text="Fratr" />
         <Image
             x:Name="image"
-            Grid.Row="1"
-            Source="https://www.google.co.uk/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"/>
+            Grid.Row="1" />
     </Grid>
 </Window>
