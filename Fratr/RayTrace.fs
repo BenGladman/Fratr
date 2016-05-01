@@ -24,10 +24,6 @@ module RayTrace =
         |> Seq.minBy getDistance
 
     let private shade (getSigObjs: Ray -> SceneObject seq) (hit: HitResult) (light: Light) : Color =
-        // lighting factors
-        let ambient = 0.4
-        let diffuse = 0.6
-
         // get the direction of the light for this point
         let lightDir = Light.GetDirection light hit.Pos
         // is the light visible?
@@ -63,24 +59,12 @@ module RayTrace =
         diffuseColor + specularColor + ambientColor
 
     let private traceRay (getSigObjs: Ray -> SceneObject seq) (scene: Scene) (ray: Ray) =
-        findHitObj getSigObjs ray
-        |> Option.map (fun hit -> scene.Lights |> Seq.averageBy (shade getSigObjs hit))
-
-        (* alternate implentation ...
-        let lgs = lights |> Array.ofSeq
-        // modify the strength of the shading to account for multiple
-        // lights (so for two lights each will contribute 1/2 to the color)
-        let strMod (color : Color) = (1.0 / (float lgs.Length)) * color
-        // search for a hitpoint
-        let hit = findHitObj ray objs
-        // get the shaded color if a point was hit
-        let shadeCol = hit |> Option.map (fun hit -> lgs |> Array.sumBy (strMod << shade hit))
-        // return the shaded color
-        shadeCol
-        *)
+        match findHitObj getSigObjs ray with
+        | Some hit -> scene.Lights |> Seq.averageBy (shade getSigObjs hit)
+        | None -> scene.Background
 
     /// Applies the given function to each pixel in the image
-    let RayTrace (func: int -> int -> Color option -> unit) (scene: Scene) =
+    let RayTrace (func: int -> int -> Color -> unit) (scene: Scene) =
         let vp = scene.ViewPort
         let resX = scene.ResX
         let resY = scene.ResY

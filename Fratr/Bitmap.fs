@@ -24,17 +24,13 @@ module Bitmap =
         // bytes per (1px-wide) row
         let sourceStride = 4
         let alpha = 255uy
-        let bgpixel = [| 50uy; 50uy; 50uy; alpha; |]
         let pixel = [| 0uy; 0uy; 0uy; alpha; |]
 
-        let setPixel x y (c: Color option) =
-            match c with
-            | None -> wb.WritePixels (sourceRect, bgpixel, sourceStride, x, resy - 1 - y)
-            | Some color -> 
-                pixel.SetValue (f2b color.B, 0)
-                pixel.SetValue (f2b color.G, 1)
-                pixel.SetValue (f2b color.R, 2)
-                wb.WritePixels (sourceRect, pixel, sourceStride, x, resy - 1 - y)
+        let setPixel x y (color: Color) =
+            pixel.SetValue (f2b color.B, 0)
+            pixel.SetValue (f2b color.G, 1)
+            pixel.SetValue (f2b color.R, 2)
+            wb.WritePixels (sourceRect, pixel, sourceStride, x, resy - 1 - y)
 
         RayTrace setPixel scene
 
@@ -49,14 +45,12 @@ module Bitmap =
         use dc = System.Drawing.Graphics.FromImage(bitmap)
         dc.Clear(System.Drawing.Color.DarkSlateGray)
 
-        let toSysColor (c: Color) =
-            let f x = 255.0 * min 1.0 (max 0.0 x) |> int
-            System.Drawing.Color.FromArgb(255, f c.R, f c.G, f c.B)
+        // convert float between 0 and 1 to integer 0-255
+        let f2i x = 255.0 * min 1.0 (max 0.0 x) |> int
 
-        let setPixel x y c =
-            match c with
-            | None -> ()
-            | Some color -> bitmap.SetPixel(x, resy - 1 - y, color |> toSysColor)
+        let setPixel x y (c: Color) =
+            let color = System.Drawing.Color.FromArgb(255, f2i c.R, f2i c.G, f2i c.B)
+            bitmap.SetPixel(x, resy - 1 - y, color)
 
         RayTrace setPixel scene
  

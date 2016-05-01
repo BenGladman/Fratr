@@ -37,3 +37,4 @@ module Color =
     let Red = Color (1.0, 0.0, 0.0)
     let Green = Color (0.0, 1.0, 0.0)
     let Blue = Color (0.0, 0.0, 1.0)
+    let DarkGrey = Color (0.3, 0.3, 0.3)

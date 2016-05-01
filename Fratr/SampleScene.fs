@@ -32,6 +32,7 @@ module SampleScene =
             ResY = 400
             Objs = objs
             Lights = lights
+            Background = Color.DarkGrey
         }
 
     let Scene2 =
@@ -61,4 +62,5 @@ module SampleScene =
             ResY = 400
             Objs = objs
             Lights = lights
+            Background = Color.DarkGrey
         }

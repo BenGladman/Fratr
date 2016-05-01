@@ -1,5 +1,6 @@
 ﻿namespace Fratr
 
+open Color
 open Light
 open SceneObject
 open ViewPort
@@ -11,4 +12,5 @@ module Scene =
         ResY: int
         Objs: SceneObject seq
         Lights: Light seq
+        Background: Color
         }
