@@ -59,9 +59,26 @@ module RayTrace =
         diffuseColor + specularColor + ambientColor
 
     let private traceRay (getSigObjs: Ray -> SceneObject seq) (scene: Scene) (ray: Ray) =
-        match findHitObj getSigObjs ray with
-        | Some hit -> scene.Lights |> Seq.averageBy (shade getSigObjs hit)
-        | None -> scene.Background
+        let rec traceRecursive iter ray =
+            if iter > 9 then
+                // Max reflections
+                Color.Black
+            else
+                let reflectHit (hit: HitResult) =
+                    if hit.Material.Reflectivity |> IsPositive then
+                        let reflDir = hit.Ray.Direction - 2.0 * (Dot (hit.Normal, hit.Ray.Direction)) * hit.Normal;
+                        let reflRay = Ray (hit.Pos, reflDir)
+                        let reflColor = traceRecursive (iter + 1) reflRay
+                        hit.Material.Reflectivity * reflColor
+                    else
+                        Color.Black        
+
+                match findHitObj getSigObjs ray with
+                | Some hit -> (scene.Lights |> Seq.averageBy (shade getSigObjs hit)) + (reflectHit hit)
+                | None when iter = 0 -> scene.Background
+                | None -> Color.Black
+
+        traceRecursive 0 ray
 
     /// Applies the given function to each pixel in the image
     let RayTrace (func: int -> int -> Color -> unit) (scene: Scene) =

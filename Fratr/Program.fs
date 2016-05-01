@@ -4,6 +4,10 @@ open System.Windows
 open System.Windows.Controls
 open System.Windows.Markup
 
+/// Raytracer in F#.
+/// Closely based on http://gettingsharper.de/2011/11/30/next-raytracing-in-f/
+/// Also https://github.com/MartinDoms/Fray
+/// And http://www.tryfsharp.org/create/cpoulain/shared/raytracer.fsx
   
 [<STAThread>]
 [<EntryPoint>]
@@ -15,7 +19,7 @@ let main argv =
     
     // Hook into UI elements here
     application.Activated
-    |> Event.add (fun _ -> Bitmap.Initialize application.MainWindow SampleScene.Scene2)
+    |> Event.add (fun _ -> Bitmap.Initialize application.MainWindow SampleScene.Scene3)
 
     // Use this to save file rather than display in window
     // Bitmap.SaveImage SampleScene.Scene1
