@@ -7,7 +7,6 @@ open Ray
 open Scene
 open SceneObject
 open Vector
-open ViewPort
 
 module RayTrace =
     let private findHitObj (getSigObjs: Ray -> SceneObject seq) (ray: Ray) =
@@ -59,26 +58,58 @@ module RayTrace =
         diffuseColor + specularColor + ambientColor
 
     let private traceRay (getSigObjs: Ray -> SceneObject seq) (scene: Scene) (ray: Ray) =
-        let rec traceRecursive iter ray =
+        let rec traceRecursive iter ray (backgroundColor: Color) (listRI: float list) =
             if iter > 9 then
-                // Max reflections
+                // Max iterations
                 Color.Black
             else
                 let reflectHit (hit: HitResult) =
                     if hit.Material.Reflectivity |> IsPositive then
                         let reflDir = hit.Ray.Direction - 2.0 * (Dot (hit.Normal, hit.Ray.Direction)) * hit.Normal;
                         let reflRay = Ray (hit.Pos, reflDir)
-                        let reflColor = traceRecursive (iter + 1) reflRay
+                        let reflColor = traceRecursive (iter + 1) reflRay Color.Black listRI
                         hit.Material.Reflectivity * reflColor
                     else
                         Color.Black        
 
-                match findHitObj getSigObjs ray with
-                | Some hit -> (scene.Lights |> Seq.averageBy (shade getSigObjs hit)) + (reflectHit hit)
-                | None when iter = 0 -> scene.Background
-                | None -> Color.Black
+                let refractHit (hit: HitResult) =
+                    let materialRI = hit.Material.RefractiveIndex
+                    if materialRI |> IsPositive then
+                        let cosI = -(Dot (hit.Normal, hit.Ray.Direction))
+                        // Ray and normal have the same direction, ray is inside the material.
+                        let rayInside = cosI |> IsNegative
+                        let direction = if rayInside then -1.0 else 1.0
+                        let newListRI =
+                            if rayInside then
+                                listRI.Tail
+                            else
+                                materialRI :: listRI
 
-        traceRecursive 0 ray
+                        let n = listRI.Head / newListRI.Head
+
+                        // Calculate the refracted angle's cosine.
+                        let cosT2 = 1.0 - (pown n 2) * (1.0 - (pown cosI 2))
+
+                        if (cosT2 |> IsPositive) then
+                            let cosT = sqrt cosT2
+                            let normal = direction * hit.Normal
+                            let cosIa = direction * cosI
+                            let refrDir = (n * hit.Ray.Direction) + ((n * cosIa - cosT) * normal)
+                            let refrRay = Ray (hit.Pos, refrDir)
+                            let refrColor = traceRecursive (iter + 1) refrRay backgroundColor newListRI                            
+                            hit.Material.TransparentColor * refrColor
+                        else
+                            // Total internal reflection
+                            Color.Black
+
+                    else
+                        Color.Black
+
+                match findHitObj getSigObjs ray with
+                | Some hit -> (scene.Lights |> Seq.averageBy (shade getSigObjs hit)) + (reflectHit hit) + (refractHit hit)
+                | None -> backgroundColor
+
+        traceRecursive 0 ray scene.Background [1.0]
 
     /// Applies the given function to each pixel in the image
     let RayTrace (func: int -> int -> Color -> unit) (scene: Scene) =
@@ -98,5 +129,5 @@ module RayTrace =
                 let point = start + (float x * dX) * vp.DirRight + (float y * dY) * vp.DirUp
                 let ray = Ray.FromPoints vp.Eye point
                 let c = traceRay getSigObjs scene ray
-                func x y c
+                do func x y c
 

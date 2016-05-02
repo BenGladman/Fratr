@@ -6,15 +6,19 @@ module Material =
     type Material = {
         DiffuseColor: Color
         SpecularColor: Color
+        TransparentColor: Color
         Shininess: float
         Reflectivity: float
+        RefractiveIndex: float
         }
 
     let WhiteMatt: Material = {
         DiffuseColor = White
         SpecularColor = White
+        TransparentColor = LightGrey
         Shininess = 0.1
         Reflectivity = 0.0
+        RefractiveIndex = 0.0
         }
 
     let WhiteShiny = { WhiteMatt with Shininess = 0.9 }
@@ -31,3 +35,4 @@ module Material =
     let BlueMatt = { WhiteMatt with DiffuseColor = Blue }
     let BlueShiny = { WhiteShiny with DiffuseColor = Blue }
     let BlueReflective = { WhiteReflective with DiffuseColor = Blue }
+    let Glass = { BlackShiny with RefractiveIndex = 1.5 }

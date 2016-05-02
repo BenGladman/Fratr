@@ -7,7 +7,7 @@ open ViewPort
 module SampleScene =
     let Scene1 =
         let vp: ViewPort = {
-            Eye = Vector (0.0, 0.0, -10.0)
+            Eye = Vector (0.0, 0.0, -20.0)
             Center = Vector.Zero
             DirUp = Vector.E2
             DirRight = Vector.E1
@@ -15,10 +15,13 @@ module SampleScene =
             Width = 20.0
             }
 
-        let objs = [
-            SceneObject.Sphere (Vector (0.0, 0.0, 10.0)) 10.0 Material.RedShiny
-            SceneObject.Sphere (Vector (5.0, 3.0, 5.0)) 5.0 Material.BlueMatt
-            SceneObject.Sphere (Vector (-5.0, -3.0, 14.0)) 15.0 Material.WhiteMatt
+        let objs = [            
+            SceneObject.Sphere (Vector (-5.0, 1.0, 0.0)) 2.0 Material.WhiteShiny
+            SceneObject.Sphere (Vector (0.0, 1.0, 0.0)) 2.0 Material.WhiteReflective                        
+            SceneObject.Sphere (Vector (-0.2, 1.0, -10.0)) 2.0 Material.Glass
+            SceneObject.Sphere (Vector (3.5, 1.0, -10.0)) 2.0 Material.Glass
+            SceneObject.Sphere (Vector (0.2, 0.0, -15.0)) 1.0 Material.Glass
+            SceneObject.Plane (Vector (0.0, -1.0, 0.0)) Vector.E2 Material.BlueMatt
             ]
 
         let lights = [
