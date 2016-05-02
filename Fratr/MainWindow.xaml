@@ -8,6 +8,8 @@
                 Height="Auto" />
             <RowDefinition
                 Height="*" />
+            <RowDefinition
+                Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock
             Grid.Row="0"
@@ -17,5 +19,8 @@
         <Image
             x:Name="image"
             Grid.Row="1" />
+        <TextBlock
+            x:Name="infotext"
+            Grid.Row="2" />
     </Grid>
 </Window>

@@ -9,11 +9,14 @@ open System.Windows.Media.Imaging
 module Bitmap =
     let Initialize (mainWindow: System.Windows.Window) (scene: Scene) =
         let image = mainWindow.FindName("image") :?> System.Windows.Controls.Image
+        let infotext = mainWindow.FindName("infotext") :?> System.Windows.Controls.TextBlock
 
         let resx = scene.ResX
         let resy = scene.ResY
 
         let wb = WriteableBitmap (resx, resy, 96.0, 96.0, System.Windows.Media.PixelFormats.Bgra32, null)
+        image.Source <- wb
+        infotext.Text <- "Rendering..."
 
         // convert float between 0 and 1 to byte value
         let f2b (f: float) =
@@ -32,9 +35,11 @@ module Bitmap =
             pixel.SetValue (f2b color.R, 2)
             wb.WritePixels (sourceRect, pixel, sourceStride, x, resy - 1 - y)
 
+        let stopWatch = System.Diagnostics.Stopwatch.StartNew()
         RayTrace setPixel scene
+        stopWatch.Stop()
 
-        image.Source <- wb
+        infotext.Text <- sprintf "Rendered in %i ms" stopWatch.ElapsedMilliseconds
 
     let SaveImage scene =
         let resx = scene.ResX
