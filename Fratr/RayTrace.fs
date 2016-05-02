@@ -22,6 +22,9 @@ module RayTrace =
         // get the nearest (or none of no hit)
         |> Seq.minBy getDistance
 
+    let private reflectionDirection (hit: HitResult) =
+        hit.Ray.Direction - 2.0 * (Dot (hit.Normal, hit.Ray.Direction)) * hit.Normal
+
     let private shade (getSigObjs: Ray -> SceneObject seq) (hit: HitResult) (light: Light) : Color =
         // get the direction of the light for this point
         let lightDir = Light.GetDirection light hit.Pos
@@ -41,11 +44,12 @@ module RayTrace =
                 Color.Black
 
         let specularColor =
-            if lightVisible then
-                let reflDir = hit.Ray.Direction - 2.0 * (Dot (hit.Normal, hit.Ray.Direction)) * hit.Normal;
+            let shininess = hit.Material.Shininess
+            if (lightVisible && shininess > 1) then
+                let reflDir = hit |> reflectionDirection
                 let specFrac = (Dot (reflDir, lightDir))
                 if (specFrac > 0.1) then
-                    System.Math.Pow(specFrac, 10.0) * hit.Material.Shininess * hit.Material.SpecularColor * light.Color
+                    (pown specFrac shininess) * hit.Material.SpecularColor * light.Color
                 else
                     Color.Black
             else
@@ -65,7 +69,7 @@ module RayTrace =
             else
                 let reflectHit (hit: HitResult) =
                     if hit.Material.Reflectivity |> IsPositive then
-                        let reflDir = hit.Ray.Direction - 2.0 * (Dot (hit.Normal, hit.Ray.Direction)) * hit.Normal;
+                        let reflDir = hit |> reflectionDirection
                         let reflRay = Ray (hit.Pos, reflDir)
                         let reflColor = traceRecursive (iter + 1) reflRay Color.Black listRI
                         hit.Material.Reflectivity * reflColor
@@ -78,7 +82,7 @@ module RayTrace =
                         let cosI = -(Dot (hit.Normal, hit.Ray.Direction))
                         // Ray and normal have the same direction, ray is inside the material.
                         let rayInside = cosI |> IsNegative
-                        let direction = if rayInside then -1.0 else 1.0
+                        let directionFactor = if rayInside then -1.0 else 1.0
                         let newListRI =
                             if rayInside then
                                 listRI.Tail
@@ -92,8 +96,8 @@ module RayTrace =
 
                         if (cosT2 |> IsPositive) then
                             let cosT = sqrt cosT2
-                            let normal = direction * hit.Normal
-                            let cosIa = direction * cosI
+                            let normal = directionFactor * hit.Normal
+                            let cosIa = directionFactor * cosI
                             let refrDir = (n * hit.Ray.Direction) + ((n * cosIa - cosT) * normal)
                             let refrRay = Ray (hit.Pos, refrDir)
                             let refrColor = traceRecursive (iter + 1) refrRay backgroundColor newListRI                            
@@ -106,7 +110,7 @@ module RayTrace =
                         Color.Black
 
                 match findHitObj getSigObjs ray with
-                | Some hit -> (scene.Lights |> Seq.averageBy (shade getSigObjs hit)) + (reflectHit hit) + (refractHit hit)
+                | Some hit -> (scene.Lights |> Seq.sumBy (shade getSigObjs hit)) + (reflectHit hit) + (refractHit hit)
                 | None -> backgroundColor
 
         traceRecursive 0 ray scene.Background [1.0]

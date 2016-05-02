@@ -20,13 +20,13 @@ module SampleScene =
             SceneObject.Sphere (Vector (0.0, 1.0, 0.0)) 2.0 Material.WhiteReflective                        
             SceneObject.Sphere (Vector (-0.2, 1.0, -10.0)) 2.0 Material.Glass
             SceneObject.Sphere (Vector (3.5, 1.0, -10.0)) 2.0 Material.Glass
-            SceneObject.Sphere (Vector (0.2, 0.0, -15.0)) 1.0 Material.Glass
-            SceneObject.Plane (Vector (0.0, -1.0, 0.0)) Vector.E2 Material.BlueMatt
+            SceneObject.Sphere (Vector (0.2, -0.4, -18.0)) 0.6 Material.Glass
+            SceneObject.Sphere (Vector (0.2, -0.4, -18.0)) 0.1 Material.WhiteMatt
+            SceneObject.Plane (Vector (0.0, -1.0, 0.0)) Vector.E2 Material.RedMatt
             ]
 
         let lights = [
-            Light.CreatePointLight Color.White (Vector (1.0, 10.0, -10.0))
-            Light.CreateDirectionalLight Color.White (Vector (0.0, -1.0, 0.1))
+            Light.CreatePointLight Color.White (Vector (10.0, 10.0, -10.0))
             ]
 
         {
@@ -56,7 +56,6 @@ module SampleScene =
 
         let lights = [
             Light.CreatePointLight Color.White (Vector (1.0, 20.0, -10.0))
-            Light.CreateDirectionalLight Color.White (Vector (0.0, -1.0, 0.1))
             ]
 
         {
@@ -87,8 +86,8 @@ module SampleScene =
             ]
 
         let lights = [
-            Light.CreatePointLight Color.White (Vector (1.0, 20.0, -10.0))
-            Light.CreateDirectionalLight Color.White (Vector (0.0, -1.0, 0.1))
+            Light.CreatePointLight Color.MidGrey (Vector (1.0, 20.0, -10.0))
+            Light.CreateDirectionalLight Color.MidGrey (Vector (0.0, -1.0, 0.1))
             ]
 
         {

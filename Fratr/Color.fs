@@ -33,9 +33,10 @@ module Color =
         end
     
     let Black = Color (0.0, 0.0, 0.0)
+    let DarkGrey = Color (0.2, 0.2, 0.2)
+    let MidGrey = Color (0.5, 0.5, 0.5)
+    let LightGrey = Color (0.8, 0.8, 0.8)
     let White = Color (1.0, 1.0, 1.0)
     let Red = Color (1.0, 0.0, 0.0)
     let Green = Color (0.0, 1.0, 0.0)
     let Blue = Color (0.0, 0.0, 1.0)
-    let LightGrey = Color (0.8, 0.8, 0.8)
-    let DarkGrey = Color (0.3, 0.3, 0.3)
