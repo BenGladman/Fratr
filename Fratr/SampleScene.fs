@@ -80,6 +80,7 @@ module SampleScene =
             SceneObject.Sphere (Vector (5.0, -2.0, 15.0)) 7.0 Material.WhiteReflective
             SceneObject.Sphere (Vector (0.0, -8.0, 11.0)) 3.0 Material.BlackReflective
             SceneObject.Sphere (Vector (0.0, 9.0, 16.0)) 7.0 Material.BlackReflective
+            SceneObject.Plane (Vector (0.0, -8.0, 0.0)) Vector.E2 Material.BlueReflective
             ]
 
         let lights = [

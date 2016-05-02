@@ -50,3 +50,20 @@ module SceneObject =
 
         { HitTest = hitTest }
 
+    let Plane (pointOnPlane: Point) (normal: Direction) (material: Material) : SceneObject =
+        let hitTest (ray: Ray) =
+            let k = Dot (ray.Direction, normal)
+            if k |> IsNearZero then
+                // ray is perpendicular to plane normal
+                None
+            else
+                let l = Dot ((pointOnPlane - ray.Start), normal)
+                let dist = (l / k)
+                if dist |> IsPositive then
+                    let pos = ray.Start + dist * ray.Direction
+                    { Ray = ray; Distance = dist; Pos = pos; Normal = normal; Material = material }
+                    |> Some
+                else
+                    None
+                
+        { HitTest = hitTest }
